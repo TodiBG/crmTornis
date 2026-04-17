@@ -1,4 +1,5 @@
 <?php
+// Cette page traite la soumission du formulaire de modification.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -32,6 +33,7 @@ $_SESSION['old_product'] = [
     'stock' => $stock,
 ];
 
+// En cas d'erreur, on revient sur edit.php avec les valeurs deja saisies.
 if ($name === '' || $code === '' || $price === '' || $stock === '') {
     $_SESSION['flash_message'] = 'Veuillez remplir tous les champs obligatoires.';
     $_SESSION['flash_type'] = 'danger';
@@ -54,6 +56,7 @@ if (filter_var($stock, FILTER_VALIDATE_INT) === false || (int) $stock < 0) {
 }
 
 $query = 'UPDATE products SET name = :name, code = :code, description = :description, price = :price, stock = :stock WHERE id = :id';
+// L'identifiant du produit est conserve dans les parametres pour cibler la bonne ligne.
 $params = [
     ':name' => $name,
     ':code' => $code,
