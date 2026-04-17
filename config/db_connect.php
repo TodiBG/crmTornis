@@ -1,6 +1,7 @@
 <?php
 
 
+// Les constantes de connexion sont definies dans db.php pour centraliser la configuration.
 require_once 'config/db.php';
 
 
@@ -20,6 +21,8 @@ try {
 
 // Fonction de fabrication de requêtes
 function executeQuey(String  $quey) {
+    // Cette fonction est encore un brouillon pedagogique.
+    // Elle sera remplacee plus tard par un vrai helper SQL.
     return  ;  
 
     try {
