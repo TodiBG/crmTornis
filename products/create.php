@@ -1,4 +1,5 @@
 <?php
+// La session conserve les anciennes valeurs si le formulaire echoue.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -37,6 +38,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                     <a href="index.php" class="btn btn-outline-secondary">Retour</a>
                 </div>
 
+                <!-- Le formulaire poste vers store.php qui fera les validations et l'insertion. -->
                 <form action="store.php" method="post">
                     <div class="row g-3">
                         <div class="col-md-8">
