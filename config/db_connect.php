@@ -1,7 +1,6 @@
 <?php
 
-
-require_once 'config/db.php';
+require_once 'db.php';
 
 
 // Connnexion à la base de données 
