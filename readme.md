@@ -1,6 +1,7 @@
 #  Conception du projet CRM Tornis
 
 ## 1. Présentation du projet
+- TP de la formation en dévéloppement PHP.  
 
 Le projet **CRM Tornis** consiste à développer une application web de gestion commerciale permettant à la startup Tornis de :
 
