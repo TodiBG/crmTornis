@@ -44,27 +44,25 @@ if (filter_var($stock, FILTER_VALIDATE_INT) === false || (int) $stock < 0) {
     exit;
 }
 
-try {
-    $statement = $pdo->prepare(
-        'INSERT INTO products (name, code, description, price, stock) VALUES (:name, :code, :description, :price, :stock)'
-    );
 
-    $statement->execute([
-        ':name' => $name,
-        ':code' => $code,
-        ':description' => $description !== '' ? $description : null,
-        ':price' => number_format((float) $price, 2, '.', ''),
-        ':stock' => (int) $stock,
-    ]);
+$query = 'INSERT INTO products (name, code, description, price, stock) VALUES (:name, :code, :description, :price, :stock)';
+$params =     [
+    ':name' => $name,
+    ':code' => $code,
+    ':description' => $description !== '' ? $description : null,
+    ':price' => number_format((float) $price, 2, '.', ''),
+    ':stock' => (int) $stock,
+];
 
+if (saveInDB($query, $params)) {
     unset($_SESSION['old_product']);
     $_SESSION['flash_message'] = 'Le produit a été enregistre avec succes.';
     $_SESSION['flash_type'] = 'success';
     header('Location: create.php');
     exit;
-} catch (PDOException $exception) {
-    $_SESSION['flash_message'] = 'Erreur lors de l\'enregistrement du produit.';
-    $_SESSION['flash_type'] = 'danger';
-    header('Location: create.php');
-    exit;
 }
+
+$_SESSION['flash_message'] = 'Erreur lors de l\'enregistrement du produit.';
+$_SESSION['flash_type'] = 'danger';
+header('Location: create.php');
+exit;
