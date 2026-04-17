@@ -1,4 +1,5 @@
 <?php
+// L'identifiant du produit vient de l'URL : on le valide avant toute lecture SQL.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -26,6 +27,7 @@ if ($product === false) {
 $old = $_SESSION['old_product'] ?? [];
 unset($_SESSION['old_product']);
 
+// Si une validation a echoue precedemment, on re-affiche les valeurs saisies.
 if ($old !== []) {
     $product['name'] = $old['name'] ?? $product['name'];
     $product['code'] = $old['code'] ?? $product['code'];
@@ -65,6 +67,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                     <a href="index.php" class="btn btn-outline-secondary">Retour</a>
                 </div>
 
+                <!-- Le formulaire poste vers update.php qui gerera la modification en base. -->
                 <form action="update.php" method="post">
                     <input type="hidden" name="id" value="<?= htmlspecialchars((string) $product['id']) ?>">
 
