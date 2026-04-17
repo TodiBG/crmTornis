@@ -3,8 +3,21 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
-$orders = fetchManyFromDB(
-    "SELECT
+$statusFilter = trim($_GET['status'] ?? '');
+$customerFilter = filter_input(INPUT_GET, 'customer_id', FILTER_VALIDATE_INT);
+$dateFrom = trim($_GET['date_from'] ?? '');
+$dateTo = trim($_GET['date_to'] ?? '');
+
+// Ces options alimentent le select de filtre et servent aussi de documentation de la logique.
+$statusGroups = [
+    'pending' => ['En_attente', 'en_attente'],
+    'validated' => ['ValidÃ©e', 'Validée', 'Validée'],
+    'cancelled' => ['AnnulÃ©e', 'Annulée', 'Annulée'],
+];
+
+$customers = fetchManyFromDB('SELECT id, name FROM customers ORDER BY name ASC') ?: [];
+
+$query = "SELECT
         o.id,
         o.order_date,
         o.status,
@@ -13,8 +26,41 @@ $orders = fetchManyFromDB(
         c.name AS customer_name
     FROM orders o
     INNER JOIN customers c ON c.id = o.customer_id
-    ORDER BY o.order_date DESC, o.id DESC"
-);
+    WHERE 1 = 1";
+
+$queryParams = [];
+
+if ($statusFilter !== '' && isset($statusGroups[$statusFilter])) {
+    // On construit autant de placeholders qu'il y a de variantes de statut a accepter.
+    $statusPlaceholders = [];
+
+    foreach ($statusGroups[$statusFilter] as $index => $statusValue) {
+        $placeholder = ':status_' . $index;
+        $statusPlaceholders[] = $placeholder;
+        $queryParams[$placeholder] = $statusValue;
+    }
+
+    $query .= ' AND o.status IN (' . implode(', ', $statusPlaceholders) . ')';
+}
+
+if ($customerFilter !== false && $customerFilter !== null && $customerFilter > 0) {
+    $query .= ' AND o.customer_id = :customer_id';
+    $queryParams[':customer_id'] = $customerFilter;
+}
+
+if ($dateFrom !== '') {
+    $query .= ' AND DATE(o.order_date) >= :date_from';
+    $queryParams[':date_from'] = $dateFrom;
+}
+
+if ($dateTo !== '') {
+    $query .= ' AND DATE(o.order_date) <= :date_to';
+    $queryParams[':date_to'] = $dateTo;
+}
+
+$query .= ' ORDER BY o.order_date DESC, o.id DESC';
+
+$orders = fetchManyFromDB($query, $queryParams);
 
 $pageTitle = 'CRM Tornis - Commandes';
 $activePage = 'orders';
@@ -26,13 +72,7 @@ require_once __DIR__ . '/../partials/navbar.php';
 
 <main class="container my-5">
     <div class="bg-white p-4 p-md-5 rounded-3">
-        <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
-                <?= htmlspecialchars($_SESSION['flash_message']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-            </div>
-            <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-        <?php endif; ?>
+        <?php require __DIR__ . '/../partials/flash.php'; ?>
 
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
@@ -44,13 +84,48 @@ require_once __DIR__ . '/../partials/navbar.php';
             </a>
         </div>
 
+        <form method="get" class="row g-3 align-items-end mb-4">
+            <div class="col-md-3">
+                <label for="status" class="form-label">Statut</label>
+                <select class="form-select" id="status" name="status">
+                    <option value="">Tous</option>
+                    <option value="pending" <?= $statusFilter === 'pending' ? 'selected' : '' ?>>En attente</option>
+                    <option value="validated" <?= $statusFilter === 'validated' ? 'selected' : '' ?>>Validées</option>
+                    <option value="cancelled" <?= $statusFilter === 'cancelled' ? 'selected' : '' ?>>Annulées</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label for="customer_id" class="form-label">Client</label>
+                <select class="form-select" id="customer_id" name="customer_id">
+                    <option value="">Tous</option>
+                    <?php foreach ($customers as $customer): ?>
+                        <option value="<?= htmlspecialchars((string) $customer['id']) ?>" <?= (string) $customerFilter === (string) $customer['id'] ? 'selected' : '' ?>>
+                            <?= htmlspecialchars($customer['name']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <label for="date_from" class="form-label">Du</label>
+                <input type="date" class="form-control" id="date_from" name="date_from" value="<?= htmlspecialchars($dateFrom) ?>">
+            </div>
+            <div class="col-md-2">
+                <label for="date_to" class="form-label">Au</label>
+                <input type="date" class="form-control" id="date_to" name="date_to" value="<?= htmlspecialchars($dateTo) ?>">
+            </div>
+            <div class="col-md-2 d-flex gap-2">
+                <button type="submit" class="btn text-white" style="background-color: #0B3041;">Filtrer</button>
+                <a href="index.php" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+
         <?php if ($orders === false): ?>
             <div class="alert alert-danger mb-0" role="alert">
                 Une erreur est survenue lors du chargement des commandes.
             </div>
         <?php elseif ($orders === []): ?>
             <div class="border rounded-3 p-4 text-center text-muted">
-                Aucune commande n'est encore enregistree.
+                Aucune commande ne correspond aux filtres selectionnes.
             </div>
         <?php else: ?>
             <!-- Le tableau donne une vue synthese du cycle commercial. -->
@@ -73,11 +148,11 @@ require_once __DIR__ . '/../partials/navbar.php';
                                 <td class="py-3"><?= htmlspecialchars($order['customer_name']) ?></td>
                                 <td class="py-3"><?= htmlspecialchars(date('d/m/Y H:i', strtotime($order['order_date']))) ?></td>
                                 <td class="py-3">
-                                    <?php if ($order['status'] === 'En_attente'): ?>
+                                    <?php if (in_array($order['status'], ['En_attente', 'en_attente'], true)): ?>
                                         <span class="badge bg-warning text-dark">En attente</span>
-                                    <?php elseif ($order['status'] === 'validée'): ?>
+                                    <?php elseif (in_array($order['status'], ['ValidÃ©e', 'Validée', 'Validée'], true)): ?>
                                         <span class="badge bg-success">Validée</span>
-                                    <?php elseif ($order['status'] === 'annulée'): ?>
+                                    <?php elseif (in_array($order['status'], ['AnnulÃ©e', 'Annulée', 'Annulée'], true)): ?>
                                         <span class="badge bg-danger">Annulée</span>
                                     <?php else: ?>
                                         <span class="badge bg-secondary"><?= htmlspecialchars($order['status']) ?></span>
@@ -167,8 +242,8 @@ require_once __DIR__ . '/../partials/navbar.php';
                     <label for="updateOrderStatusValue" class="form-label">Nouveau statut</label>
                     <select class="form-select" id="updateOrderStatusValue" name="status" required>
                         <option value="En_attente">En attente</option>
-                        <option value="Validée">Validée</option>
-                        <option value="Annulée">Annulée</option>
+                        <option value="ValidÃ©e">Validée</option>
+                        <option value="AnnulÃ©e">Annulée</option>
                     </select>
                 </form>
             </div>

@@ -4,8 +4,10 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
-$customers = fetchManyFromDB(
-    "SELECT
+$search = trim($_GET['search'] ?? '');
+
+// On construit la requete progressivement pour pouvoir ajouter une recherche libre.
+$query = "SELECT
         c.id,
         c.name,
         c.email,
@@ -20,10 +22,26 @@ $customers = fetchManyFromDB(
             ELSE 1
         END AS effective_is_active
     FROM customers c
-    LEFT JOIN orders o ON o.customer_id = c.id
+    LEFT JOIN orders o ON o.customer_id = c.id";
+
+$queryParams = [];
+
+if ($search !== '') {
+    // Une seule saisie permet de rechercher dans plusieurs colonnes utiles.
+    $query .= "
+    WHERE
+        c.name LIKE :search
+        OR c.email LIKE :search
+        OR c.tel LIKE :search
+        OR c.address LIKE :search";
+    $queryParams[':search'] = '%' . $search . '%';
+}
+
+$query .= "
     GROUP BY c.id, c.name, c.email, c.tel, c.address, c.is_active, c.created_at
-    ORDER BY c.created_at DESC, c.id DESC"
-);
+    ORDER BY c.created_at DESC, c.id DESC";
+
+$customers = fetchManyFromDB($query, $queryParams);
 
 $pageTitle = 'CRM Tornis - Clients';
 $activePage = 'customers';
@@ -35,13 +53,7 @@ require_once __DIR__ . '/../partials/navbar.php';
 
 <main class="container my-5">
     <div class="bg-white p-4 p-md-5 rounded-3">
-        <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
-                <?= htmlspecialchars($_SESSION['flash_message']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-            </div>
-            <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-        <?php endif; ?>
+        <?php require __DIR__ . '/../partials/flash.php'; ?>
 
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
@@ -53,13 +65,30 @@ require_once __DIR__ . '/../partials/navbar.php';
             </a>
         </div>
 
+        <form method="get" class="row g-3 align-items-end mb-4">
+            <div class="col-md-8">
+                <label for="search" class="form-label">Recherche client</label>
+                <input
+                    type="text"
+                    class="form-control"
+                    id="search"
+                    name="search"
+                    value="<?= htmlspecialchars($search) ?>"
+                    placeholder="Nom, email, telephone ou adresse">
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn text-white" style="background-color: #0B3041;">Rechercher</button>
+                <a href="index.php" class="btn btn-outline-secondary">Reinitialiser</a>
+            </div>
+        </form>
+
         <?php if ($customers === false): ?>
             <div class="alert alert-danger mb-0" role="alert">
                 Une erreur est survenue lors du chargement des clients.
             </div>
         <?php elseif ($customers === []): ?>
             <div class="border rounded-3 p-4 text-center text-muted">
-                Aucun client n'est encore enregistre.
+                <?= $search !== '' ? 'Aucun client ne correspond a votre recherche.' : 'Aucun client n\'est encore enregistre.' ?>
             </div>
         <?php else: ?>
             <!-- Le tableau sert de vue synthese pour consulter et administrer les clients. -->

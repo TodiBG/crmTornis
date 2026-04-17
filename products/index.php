@@ -2,8 +2,37 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
-$products = fetchManyFromDB(
-    'SELECT id, name, code, description, price, stock, created_at FROM products ORDER BY created_at DESC, id DESC'
+$stockFilter = trim($_GET['stock_status'] ?? '');
+
+// Le seuil "faible stock" est volontairement explicite pour etre facile a modifier plus tard.
+$lowStockThreshold = 5;
+
+$query = 'SELECT id, name, code, description, price, stock, created_at FROM products';
+$queryParams = [];
+
+if ($stockFilter === 'available') {
+    $query .= ' WHERE stock > :available_threshold';
+    $queryParams[':available_threshold'] = $lowStockThreshold;
+} elseif ($stockFilter === 'low') {
+    $query .= ' WHERE stock BETWEEN :low_min AND :low_max';
+    $queryParams[':low_min'] = 1;
+    $queryParams[':low_max'] = $lowStockThreshold;
+} elseif ($stockFilter === 'out') {
+    $query .= ' WHERE stock <= 0';
+}
+
+$query .= ' ORDER BY created_at DESC, id DESC';
+
+$products = fetchManyFromDB($query, $queryParams);
+
+$stockSummary = fetchOneFromDB(
+    'SELECT
+        COUNT(*) AS total_products,
+        COALESCE(SUM(stock), 0) AS total_units,
+        SUM(CASE WHEN stock BETWEEN 1 AND :low_threshold THEN 1 ELSE 0 END) AS low_stock_products,
+        SUM(CASE WHEN stock <= 0 THEN 1 ELSE 0 END) AS out_of_stock_products
+    FROM products',
+    [':low_threshold' => $lowStockThreshold]
 );
 
 $pageTitle = 'CRM Tornis - Produits';
@@ -16,13 +45,7 @@ require_once __DIR__ . '/../partials/navbar.php';
 
 <main class="container my-5">
     <div class="bg-white p-4 p-md-5 rounded-3">
-        <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
-            <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
-                <?= htmlspecialchars($_SESSION['flash_message']) ?>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-            </div>
-            <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-        <?php endif; ?>
+        <?php require __DIR__ . '/../partials/flash.php'; ?>
 
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
             <div>
@@ -34,13 +57,52 @@ require_once __DIR__ . '/../partials/navbar.php';
             </a>
         </div>
 
+        <?php if ($stockSummary !== false): ?>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted small">Unites en stock</div>
+                        <div class="fw-bold fs-4"><?= htmlspecialchars((string) $stockSummary['total_units']) ?></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted small">Produits en stock faible</div>
+                        <div class="fw-bold fs-4 text-warning"><?= htmlspecialchars((string) $stockSummary['low_stock_products']) ?></div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="border rounded-3 p-3 h-100">
+                        <div class="text-muted small">Produits en rupture</div>
+                        <div class="fw-bold fs-4 text-danger"><?= htmlspecialchars((string) $stockSummary['out_of_stock_products']) ?></div>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+
+        <form method="get" class="row g-3 align-items-end mb-4">
+            <div class="col-md-4">
+                <label for="stock_status" class="form-label">Filtrer le stock</label>
+                <select class="form-select" id="stock_status" name="stock_status">
+                    <option value="">Tous les produits</option>
+                    <option value="available" <?= $stockFilter === 'available' ? 'selected' : '' ?>>Stock confortable</option>
+                    <option value="low" <?= $stockFilter === 'low' ? 'selected' : '' ?>>Stock faible</option>
+                    <option value="out" <?= $stockFilter === 'out' ? 'selected' : '' ?>>Rupture</option>
+                </select>
+            </div>
+            <div class="col-md-4 d-flex gap-2">
+                <button type="submit" class="btn text-white" style="background-color: #0B3041;">Filtrer</button>
+                <a href="index.php" class="btn btn-outline-secondary">Reinitialiser</a>
+            </div>
+        </form>
+
         <?php if ($products === false): ?>
             <div class="alert alert-danger mb-0" role="alert">
                 Une erreur est survenue lors du chargement des produits.
             </div>
         <?php elseif ($products === []): ?>
             <div class="border rounded-3 p-4 text-center text-muted">
-                Aucun produit n'est encore enregistre.
+                Aucun produit ne correspond au filtre de stock selectionne.
             </div>
         <?php else: ?>
             <div class="table-responsive">
@@ -64,10 +126,16 @@ require_once __DIR__ . '/../partials/navbar.php';
                                 <td class="py-3"><?= htmlspecialchars($product['description'] ?? '-') ?></td>
                                 <td class="text-end py-3"><?= htmlspecialchars(number_format((float) $product['price'], 0, ',', ' ')) ?></td>
                                 <td class="text-center py-3">
-                                    <?php if ((int) $product['stock'] > 0): ?>
-                                        <span class="badge bg-success"><?= htmlspecialchars((string) $product['stock']) ?></span>
-                                    <?php else: ?>
+                                    <?php
+                                    // Les couleurs aident a identifier rapidement les produits a surveiller.
+                                    $stockValue = (int) $product['stock'];
+                                    ?>
+                                    <?php if ($stockValue <= 0): ?>
                                         <span class="badge bg-danger">Rupture</span>
+                                    <?php elseif ($stockValue <= $lowStockThreshold): ?>
+                                        <span class="badge bg-warning text-dark"><?= htmlspecialchars((string) $stockValue) ?> (faible)</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success"><?= htmlspecialchars((string) $stockValue) ?></span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="py-3"><?= htmlspecialchars(date('d/m/Y H:i', strtotime($product['created_at']))) ?></td>

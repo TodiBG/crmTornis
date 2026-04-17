@@ -14,13 +14,7 @@ require_once __DIR__ . '/partials/navbar.php';
 
 <main class="container my-5">
 
-    <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
-        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['flash_message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-        </div>
-        <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-    <?php endif; ?>
+    <?php require __DIR__ . '/partials/flash.php'; ?>
 
     <div class="p-5 mb-4 bg-white rounded-3">
         <div class="container-fluid py-2">
@@ -37,7 +31,9 @@ require_once __DIR__ . '/partials/navbar.php';
                     <a href="customers/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
                     <a href="products/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un produit</a>
                     <a href="orders/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter une commande</a>
-                    <a href="users/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
+                    <?php if (isAdmin()): ?>
+                        <a href="users/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
+                    <?php endif; ?>
                 <?php else: ?>
                     <!--
                         L'accueil reste public, mais les pages de gestion sont protegees.
