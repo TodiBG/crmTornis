@@ -14,17 +14,19 @@ require_once __DIR__ . '/../partials/navbar.php';
 ?>
 
 <main class="container my-5">
-    <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
-        <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
-            <?= htmlspecialchars($_SESSION['flash_message']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
-        </div>
-        <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
-    <?php endif; ?>
 
     <div class="row justify-content-center">
         <div class="col-lg-8">
             <div class="bg-white p-4 p-md-5 rounded-3">
+
+                <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
+                    <div class="alert alert-sm alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
+                        <?= htmlspecialchars($_SESSION['flash_message']) ?>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+                    </div>
+                    <?php unset($_SESSION['flash_message'], $_SESSION['flash_type']); ?>
+                <?php endif; ?>
+
                 <div class="d-flex justify-content-between align-items-start mb-4">
                     <div>
                         <h1 class="h3 mb-2">Ajouter un produit</h1>
