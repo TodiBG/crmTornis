@@ -1,4 +1,5 @@
 <?php
+// La session sert a memoriser les anciennes valeurs du formulaire en cas d'erreur.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -23,6 +24,7 @@ $_SESSION['old_product'] = [
     'stock' => $stock,
 ];
 
+// On valide d'abord les champs obligatoires avant de tenter l'insertion SQL.
 if ($name === '' || $code === '' || $price === '' || $stock === '') {
     $_SESSION['flash_message'] = 'Veuillez remplir tous les champs obligatoires.';
     $_SESSION['flash_type'] = 'danger';
@@ -44,9 +46,9 @@ if (filter_var($stock, FILTER_VALIDATE_INT) === false || (int) $stock < 0) {
     exit;
 }
 
-
 $query = 'INSERT INTO products (name, code, description, price, stock) VALUES (:name, :code, :description, :price, :stock)';
-$params =     [
+// Les parametres sont prepares a part pour rendre la requete plus lisible.
+$params = [
     ':name' => $name,
     ':code' => $code,
     ':description' => $description !== '' ? $description : null,
