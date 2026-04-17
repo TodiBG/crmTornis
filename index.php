@@ -1,7 +1,10 @@
 <?php
+// La session permet de transporter un message flash d'une page a l'autre.
 session_start();
 require_once 'config/db_connect.php';
 
+// Ces variables alimentent les cartes du tableau de bord.
+// Elles seront remplacees plus tard par des valeurs calculees en base.
 $totalCustomers = 0;
 $totalProducts = 0;
 $totalOrders = 0;
@@ -22,6 +25,7 @@ require_once __DIR__ . '/partials/navbar.php';
 <main class="container my-5">
 
     <?php if (isset($_SESSION['flash_message']) && isset($_SESSION['flash_type'])): ?>
+        <!-- Une fois affiche, le message est supprime de la session. -->
         <div class="alert alert-<?= htmlspecialchars($_SESSION['flash_type']) ?> alert-dismissible fade show" role="alert">
             <?= htmlspecialchars($_SESSION['flash_message']) ?>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
@@ -44,6 +48,7 @@ require_once __DIR__ . '/partials/navbar.php';
         </div>
     </div>
 
+    <!-- Chaque bloc est prevu pour afficher un indicateur clé du CRM. -->
     <div class="bg-white p-3 rounded-3">
         <div class="row g-4 mb-5">
             <div class="col-md-4">
