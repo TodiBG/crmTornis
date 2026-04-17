@@ -34,9 +34,11 @@ $authenticatedUser = getAuthenticatedUser();
                     <li class="nav-item">
                         <a class="nav-link <?= $activePage === 'orders' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>orders/index.php">Commandes</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= $activePage === 'users' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>users/index.php">Utilisateurs</a>
-                    </li>
+                    <?php if (isAdmin()): ?>
+                        <li class="nav-item">
+                            <a class="nav-link <?= $activePage === 'users' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>users/index.php">Utilisateurs</a>
+                        </li>
+                    <?php endif; ?>
                 <?php endif; ?>
             </ul>
 
@@ -56,13 +58,20 @@ $authenticatedUser = getAuthenticatedUser();
                     $navbarUserFullName = trim(($authenticatedUser['firstname'] ?? '') . ' ' . ($authenticatedUser['lastname'] ?? ''));
                     ?>
                     <li class="nav-item">
-                        <span class="nav-link d-flex align-items-center pe-1" title="<?= htmlspecialchars($navbarUserFullName) ?>">
+                        <!--
+                            L'avatar sert d'acces rapide au profil personnel.
+                            Le title permet d'afficher le nom complet au survol.
+                        -->
+                        <a
+                            class="nav-link d-flex align-items-center pe-1 <?= $activePage === 'profile' ? 'active' : '' ?>"
+                            href="<?= htmlspecialchars($basePath) ?>auth/profile.php"
+                            title="<?= htmlspecialchars($navbarUserFullName) ?>">
                             <img
                                 src="<?= htmlspecialchars($basePath . $navbarAvatarPath) ?>"
                                 alt="Avatar de <?= htmlspecialchars($navbarUserFullName) ?>"
                                 class="rounded-circle border border-light"
                                 style="width: 30px; height: 30px; object-fit: cover;">
-                        </span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="<?= htmlspecialchars($basePath) ?>auth/logout.php">Deconnexion</a>

@@ -3,6 +3,9 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
+// La liste complete des utilisateurs est une page d'administration.
+requireAdmin();
+
 // On trie les utilisateurs du plus recent au plus ancien pour retrouver facilement les derniers comptes crees.
 $users = fetchManyFromDB(
     'SELECT id, firstname, lastname, email, role, avatar_url, created_at FROM users ORDER BY created_at DESC, id DESC'

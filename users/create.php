@@ -3,6 +3,9 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
+// Seul un administrateur peut creer un autre compte utilisateur.
+requireAdmin();
+
 $old = $_SESSION['old_user'] ?? [];
 unset($_SESSION['old_user']);
 

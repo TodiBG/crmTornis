@@ -3,6 +3,9 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
+// La suppression d'un compte utilisateur reste reservee a l'administration.
+requireAdmin();
+
 /**
  * Supprime un avatar stocke localement si son chemin pointe bien
  * vers le dossier des photos de profil de l'application.

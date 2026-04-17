@@ -4,12 +4,30 @@ session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
 $userId = filter_input(INPUT_GET, 'id', FILTER_VALIDATE_INT);
+$authenticatedUser = getAuthenticatedUser();
 
 if ($userId === false || $userId === null || $userId <= 0) {
     $_SESSION['flash_message'] = 'Utilisateur introuvable.';
     $_SESSION['flash_type'] = 'danger';
     header('Location: index.php');
     exit;
+}
+
+/**
+ * Un administrateur peut modifier n'importe quel compte.
+ * Un utilisateur standard ne peut pas acceder au formulaire de modification d'un autre utilisateur.
+ * Pour modifier son propre compte, il doit utiliser la page "Mon profil".
+ */
+if (!isAdmin()) {
+    if ($authenticatedUser !== null && $userId === (int) $authenticatedUser['id']) {
+        $_SESSION['flash_message'] = 'Utilisez la page Mon profil pour modifier vos informations personnelles.';
+        $_SESSION['flash_type'] = 'info';
+        redirectToPath('/auth/profile.php');
+    }
+
+    $_SESSION['flash_message'] = 'Vous n\'avez pas le droit de modifier les informations d\'un autre utilisateur.';
+    $_SESSION['flash_type'] = 'warning';
+    redirectToPath('/auth/profile.php');
 }
 
 $user = fetchOneFromDB(

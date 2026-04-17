@@ -65,6 +65,16 @@ function isAuthenticated(): bool
 }
 
 /**
+ * Verifie si l'utilisateur connecte possede le role administrateur.
+ */
+function isAdmin(): bool
+{
+    $authenticatedUser = getAuthenticatedUser();
+
+    return $authenticatedUser !== null && ($authenticatedUser['role'] ?? '') === 'admin';
+}
+
+/**
  * Memorise l'utilisateur connecte dans la session.
  * On regenere l'identifiant de session pour limiter les risques de fixation de session.
  */
@@ -148,6 +158,23 @@ function requireAuthentication(): void
     $_SESSION['flash_message'] = 'Veuillez vous connecter pour acceder a cette page.';
     $_SESSION['flash_type'] = 'warning';
     redirectToPath('/auth/login.php');
+}
+
+/**
+ * Reserve une route aux seuls administrateurs.
+ * Un utilisateur classique est renvoye vers son profil personnel.
+ */
+function requireAdmin(): void
+{
+    requireAuthentication();
+
+    if (isAdmin()) {
+        return;
+    }
+
+    $_SESSION['flash_message'] = 'Acces reserve aux administrateurs.';
+    $_SESSION['flash_type'] = 'warning';
+    redirectToPath('/auth/profile.php');
 }
 
 /**

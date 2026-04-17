@@ -75,6 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
 }
 
 $userId = filter_input(INPUT_POST, 'id', FILTER_VALIDATE_INT);
+$authenticatedUser = getAuthenticatedUser();
 $firstname = trim($_POST['firstname'] ?? '');
 $lastname = trim($_POST['lastname'] ?? '');
 $email = trim($_POST['email'] ?? '');
@@ -93,6 +94,19 @@ if ($userId === false || $userId === null || $userId <= 0) {
     $_SESSION['flash_type'] = 'danger';
     header('Location: index.php');
     exit;
+}
+
+// La protection est refaite ici car une URL ou un formulaire peut etre forge manuellement.
+if (!isAdmin()) {
+    if ($authenticatedUser !== null && $userId === (int) $authenticatedUser['id']) {
+        $_SESSION['flash_message'] = 'Utilisez la page Mon profil pour modifier vos informations personnelles.';
+        $_SESSION['flash_type'] = 'info';
+        redirectToPath('/auth/profile.php');
+    }
+
+    $_SESSION['flash_message'] = 'Vous n\'avez pas le droit de modifier les informations d\'un autre utilisateur.';
+    $_SESSION['flash_type'] = 'warning';
+    redirectToPath('/auth/profile.php');
 }
 
 if ($firstname === '' || $lastname === '' || $email === '') {

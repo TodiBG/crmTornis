@@ -3,6 +3,9 @@
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
+// Le traitement de creation est lui aussi protege cote serveur.
+requireAdmin();
+
 /**
  * Supprime un avatar local du projet.
  * On limite volontairement la suppression au dossier assets/images/avatars
