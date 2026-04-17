@@ -1,4 +1,5 @@
 <?php
+// La suppression est volontairement reservee a une requete POST.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -30,6 +31,7 @@ if ($product === false) {
     exit;
 }
 
+// On bloque la suppression si le produit est deja reference dans une commande.
 $usage = fetchOneFromDB(
     'SELECT COUNT(*) AS total FROM order_items WHERE product_id = :id',
     [':id' => $productId]

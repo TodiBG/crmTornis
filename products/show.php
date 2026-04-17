@@ -1,4 +1,5 @@
 <?php
+// La page detail recharge le produit a partir de son identifiant dans l'URL.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -11,6 +12,7 @@ if ($productId === false || $productId === null || $productId <= 0) {
     exit;
 }
 
+// Une seule ligne est attendue, d'ou l'utilisation du helper fetchOneFromDB.
 $product = fetchOneFromDB(
     'SELECT id, name, code, description, price, stock, created_at FROM products WHERE id = :id',
     [':id' => $productId]
