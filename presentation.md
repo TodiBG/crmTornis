@@ -188,6 +188,9 @@ crm/
 │ ├── footer.php
 │ └── navbar.php
 │
+├── stats/  # Statisques
+| └──stats_global.php
+│
 ├── assets/ # CSS / JS / images
 │ ├── css/
 │ ├── js/
