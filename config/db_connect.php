@@ -1,9 +1,9 @@
 <?php
 
+// Les constantes de connexion sont definies dans db.php pour centraliser la configuration.
 require_once 'db.php';
 
-
-// Connnexion à la base de données 
+// On ouvre ici une connexion PDO unique reutilisable dans les autres fichiers.
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8', MYSQL_HOST, MYSQL_NAME, MYSQL_PORT),
@@ -15,16 +15,9 @@ try {
     die('Erreur : ' . $exception->getMessage());
 }
 
-
-
-// Fonction de fabrication de requêtes
-function executeQuey(String  $quey) {
-    return  ;  
-
-    try {
-        $statment = $pdo->query("SELECT COUNT(*) AS total FROM customers");
-    } catch (PDOException $e) {
-        $flashMessage = "Erreur lors du chargement des données.";
-        $flashType = "danger";
-    }
+// Cette fonction est encore un brouillon pedagogique.
+// Elle sera remplacee plus tard par un vrai helper SQL.
+function executeQuey(String $quey)
+{
+    return;
 }
