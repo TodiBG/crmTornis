@@ -167,6 +167,14 @@ crm/
 │ ├── edit.php
 │ ├── update.php
 │ └── delete.php
+|
+├── users/ # Gestion des utilisateurs
+│ ├── index.php
+│ ├── create.php
+│ ├── store.php
+│ ├── edit.php
+│ ├── update.php
+│ └── delete.php
 │
 ├── products/ # Gestion des produits
 │ ├── index.php

@@ -30,7 +30,7 @@ require_once __DIR__ . '/partials/navbar.php';
                 <a href="customers/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
                 <a href="products/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un produit</a>
                 <a href="orders/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter une commande</a>
-                <a href="#form-client" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
+                <a href="users/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
             </div>
         </div>
     </div>

@@ -25,6 +25,9 @@ $basePath = $basePath ?? '';
                 <li class="nav-item">
                     <a class="nav-link <?= $activePage === 'orders' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>orders/index.php">Commandes</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link <?= $activePage === 'users' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>users/index.php">Utilisateurs</a>
+                </li>
             </ul>
         </div>
     </div>
