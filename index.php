@@ -27,7 +27,7 @@ require_once __DIR__ . '/partials/navbar.php';
                 Gestion de clients, produits et commandes dans une interface simplifiee.
             </p>
             <div class="text-center">
-                <a href="#form-client" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
+                <a href="customers/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
                 <a href="products/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un produit</a>
                 <a href="#form-client" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter une commande</a>
                 <a href="#form-client" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>

@@ -21,7 +21,7 @@ CREATE TABLE customers (
     email VARCHAR(150) NOT NULL UNIQUE,
     tel VARCHAR(20) NOT NULL,
     address VARCHAR(255) NOT NULL,
-    is_active BOOLEAN NOT NULL ,
+    is_active BOOLEAN NOT NULL DEFAULT 1,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -11,7 +11,15 @@ $totalCancelledOrders = 0;
 $statsCustomers = fetchOneFromDB('SELECT COUNT(*) AS total FROM customers');
 $statsProducts = fetchOneFromDB('SELECT COUNT(*) AS total FROM products');
 $statsOrders = fetchOneFromDB("SELECT COUNT(*) AS total FROM orders WHERE status = 'en_attente'");
-$statsInactiveCustomers = fetchOneFromDB('SELECT COUNT(*) AS total FROM customers WHERE is_active = 0');
+$statsInactiveCustomers = fetchOneFromDB(
+    "SELECT COUNT(*) AS total
+    FROM customers c
+    WHERE c.is_active = 0
+    OR COALESCE(
+        (SELECT MAX(o.order_date) FROM orders o WHERE o.customer_id = c.id),
+        c.created_at
+    ) < DATE_SUB(NOW(), INTERVAL 2 YEAR)"
+);
 $statsMissingProducts = fetchOneFromDB('SELECT COUNT(*) AS total FROM products WHERE stock <= 0');
 $statsCancelledOrders = fetchOneFromDB(
     "SELECT COUNT(*) AS total FROM orders WHERE status IN ('abandonnee', 'abandonne', 'annulee', 'annule', 'cancelled')"
@@ -92,4 +100,3 @@ if ($statsCancelledOrders !== false) {
         </div>
     </div>
 </div>
-
