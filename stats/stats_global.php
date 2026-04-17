@@ -1,5 +1,6 @@
 <?php
 
+// Chaque variable correspond a une carte du tableau de bord.
 $totalCustomers = 0;
 $totalProducts = 0;
 $totalOrders = 0;
@@ -8,6 +9,7 @@ $totalInactiveCustomers = 0;
 $totalMissingProducts = 0;
 $totalCancelledOrders = 0;
 
+// Les requetes sont separees pour garder un code lisible et facile a expliquer.
 $statsCustomers = fetchOneFromDB('SELECT COUNT(*) AS total FROM customers');
 $statsProducts = fetchOneFromDB('SELECT COUNT(*) AS total FROM products');
 $statsOrders = fetchOneFromDB("SELECT COUNT(*) AS total FROM orders WHERE status = 'en_attente'");
@@ -18,6 +20,7 @@ $statsCancelledOrders = fetchOneFromDB(
 );
 
 
+// Chaque bloc verifie que la requete a bien abouti avant de lire le resultat.
 if ($statsCustomers !== false) {
     $totalCustomers = (int) $statsCustomers['total'];
 }

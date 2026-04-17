@@ -1,4 +1,5 @@
 <?php
+// La page d'accueil assemble les briques communes puis inclut le bloc de statistiques.
 session_start();
 require_once 'config/db_connect.php';
 
@@ -35,7 +36,10 @@ require_once __DIR__ . '/partials/navbar.php';
         </div>
     </div>
 
-    <?php require_once __DIR__ . '/stats/stats_global.php'; ?>
+    <?php
+    // Le fichier de stats encapsule les requetes et l'affichage du dashboard.
+    require_once __DIR__ . '/stats/stats_global.php';
+    ?>
 
 
 
