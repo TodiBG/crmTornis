@@ -23,7 +23,7 @@ $basePath = $basePath ?? '';
                     <a class="nav-link <?= $activePage === 'products' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>products/index.php">Produits</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link <?= $activePage === 'orders' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>orders.php">Commandes</a>
+                    <a class="nav-link <?= $activePage === 'orders' ? 'active' : '' ?>" href="<?= htmlspecialchars($basePath) ?>orders/index.php">Commandes</a>
                 </li>
             </ul>
         </div>

@@ -22,7 +22,7 @@ $statsInactiveCustomers = fetchOneFromDB(
 );
 $statsMissingProducts = fetchOneFromDB('SELECT COUNT(*) AS total FROM products WHERE stock <= 0');
 $statsCancelledOrders = fetchOneFromDB(
-    "SELECT COUNT(*) AS total FROM orders WHERE status IN ('abandonnee', 'abandonne', 'annulee', 'annule', 'cancelled')"
+    "SELECT COUNT(*) AS total FROM orders WHERE status IN ('abandonnee', 'abandonne', 'Annulée', 'annule', 'cancelled')"
 );
 
 

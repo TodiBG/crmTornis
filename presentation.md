@@ -181,6 +181,7 @@ crm/
 │ ├── create.php
 │ ├── store.php
 │ ├── show.php
+│ ├── update_status.php
 │ └── delete.php
 │
 ├── partials/ # Header / Footer / Navbar
