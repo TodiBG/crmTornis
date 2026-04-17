@@ -125,7 +125,7 @@ try {
     );
     $insertOrder->execute([
         ':customer_id' => $customerId,
-        ':status' => 'en_attente',
+        ':status' => 'En_attente',
         ':total_amount' => number_format($totalAmount, 2, '.', ''),
     ]);
 

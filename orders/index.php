@@ -73,7 +73,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                                 <td class="py-3"><?= htmlspecialchars($order['customer_name']) ?></td>
                                 <td class="py-3"><?= htmlspecialchars(date('d/m/Y H:i', strtotime($order['order_date']))) ?></td>
                                 <td class="py-3">
-                                    <?php if ($order['status'] === 'en_attente'): ?>
+                                    <?php if ($order['status'] === 'En_attente'): ?>
                                         <span class="badge bg-warning text-dark">En attente</span>
                                     <?php elseif ($order['status'] === 'validée'): ?>
                                         <span class="badge bg-success">Validée</span>
@@ -166,7 +166,7 @@ require_once __DIR__ . '/../partials/navbar.php';
 
                     <label for="updateOrderStatusValue" class="form-label">Nouveau statut</label>
                     <select class="form-select" id="updateOrderStatusValue" name="status" required>
-                        <option value="en_attente">En attente</option>
+                        <option value="En_attente">En attente</option>
                         <option value="Validée">Validée</option>
                         <option value="Annulée">Annulée</option>
                     </select>

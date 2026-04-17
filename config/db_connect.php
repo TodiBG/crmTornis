@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
 // Cette connexion PDO est partagee par toutes les pages du projet.
 try {
@@ -15,9 +16,11 @@ try {
     die('Erreur : ' . $exception->getMessage());
 }
 
-
-
-
+// La protection est centralisee ici : toute page qui charge la base et n'est pas publique
+// sera automatiquement redirigee vers la page de connexion si besoin.
+if (currentRouteNeedsAuthentication()) {
+    requireAuthentication();
+}
 
 function saveInDB(string $query, array $params = []): bool
 {

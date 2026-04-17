@@ -15,7 +15,7 @@ $status = trim($_POST['status'] ?? '');
 $redirectTo = trim($_POST['redirect_to'] ?? '');
 
 // La liste blanche evite d'enregistrer un statut inattendu dans la base.
-$allowedStatuses = ['en_attente', 'Validée', 'Annulée'];
+$allowedStatuses = ['En_attente', 'Validée', 'Annulée'];
 
 if ($orderId === false || $orderId === null || $orderId <= 0) {
     $_SESSION['flash_message'] = 'Commande introuvable.';

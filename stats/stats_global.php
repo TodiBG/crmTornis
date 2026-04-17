@@ -10,7 +10,7 @@ $totalCancelledOrders = 0;
 
 $statsCustomers = fetchOneFromDB('SELECT COUNT(*) AS total FROM customers');
 $statsProducts = fetchOneFromDB('SELECT COUNT(*) AS total FROM products');
-$statsOrders = fetchOneFromDB("SELECT COUNT(*) AS total FROM orders WHERE status = 'en_attente'");
+$statsOrders = fetchOneFromDB("SELECT COUNT(*) AS total FROM orders WHERE status = 'En_attente'");
 $statsInactiveCustomers = fetchOneFromDB(
     "SELECT COUNT(*) AS total
     FROM customers c

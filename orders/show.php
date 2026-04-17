@@ -105,7 +105,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                     <div class="fw-semibold"><?= htmlspecialchars(date('d/m/Y H:i', strtotime($order['order_date']))) ?></div>
                     <div>
                         Statut :
-                        <?php if ($order['status'] === 'en_attente'): ?>
+                        <?php if ($order['status'] === 'En_attente'): ?>
                             <span class="badge bg-warning text-dark">En attente</span>
                         <?php elseif ($order['status'] === 'Validée'): ?>
                             <span class="badge bg-success">Validée</span>
@@ -173,9 +173,9 @@ require_once __DIR__ . '/../partials/navbar.php';
 
                     <label for="status" class="form-label">Nouveau statut</label>
                     <select class="form-select" id="status" name="status" required>
-                        <option value="en_attente" <?= $order['status'] === 'en_attente' ? 'selected' : '' ?>>En attente</option>
-                        <option value="validée" <?= $order['status'] === 'validée' ? 'selected' : '' ?>>Validée</option>
-                        <option value="annulée" <?= $order['status'] === 'annulée' ? 'selected' : '' ?>>Annulée</option>
+                        <option value="En_attente" <?= $order['status'] === 'En_attente' ? 'selected' : '' ?>>En attente</option>
+                        <option value="Validée" <?= $order['status'] === 'Validée' ? 'selected' : '' ?>>Validée</option>
+                        <option value="Annulée" <?= $order['status'] === 'Annulée' ? 'selected' : '' ?>>Annulée</option>
                     </select>
                 </form>
             </div>

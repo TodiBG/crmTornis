@@ -39,7 +39,7 @@ CREATE TABLE orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    status VARCHAR(30) DEFAULT 'en_attente',
+    status VARCHAR(30) DEFAULT 'En_attente',
     total_amount DECIMAL(10,2) DEFAULT 0,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (customer_id) REFERENCES customers(id)

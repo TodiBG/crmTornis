@@ -1,10 +1,12 @@
 <?php
 session_start();
 require_once 'config/db_connect.php';
+require_once 'config/auth.php';
 
 $pageTitle = 'CRM Tornis - Accueil';
 $activePage = 'home';
 $basePath = '';
+$authenticatedUser = getAuthenticatedUser();
 
 require_once __DIR__ . '/partials/header.php';
 require_once __DIR__ . '/partials/navbar.php';
@@ -27,10 +29,22 @@ require_once __DIR__ . '/partials/navbar.php';
                 Gestion de clients, produits et commandes dans une interface simplifiee.
             </p>
             <div class="text-center">
-                <a href="customers/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
-                <a href="products/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un produit</a>
-                <a href="orders/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter une commande</a>
-                <a href="users/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
+                <?php if ($authenticatedUser !== null): ?>
+                    <!--
+                        Une fois connecte, l'utilisateur peut acceder directement aux actions rapides
+                        du CRM depuis la page d'accueil.
+                    -->
+                    <a href="customers/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un client</a>
+                    <a href="products/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un produit</a>
+                    <a href="orders/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter une commande</a>
+                    <a href="users/create.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Ajouter un utilisateur</a>
+                <?php else: ?>
+                    <!--
+                        L'accueil reste public, mais les pages de gestion sont protegees.
+                        On oriente donc le visiteur vers la page de connexion.
+                    -->
+                    <a href="auth/login.php" class="btn btn-md text-white mt-1" style="background-color: #0B3041;">Se connecter</a>
+                <?php endif; ?>
             </div>
         </div>
     </div>
