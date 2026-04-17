@@ -34,7 +34,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                             Renseignez les informations du produit pour l'ajouter au catalogue.
                         </p>
                     </div>
-                    <a href="../index.php" class="btn btn-outline-secondary">Retour</a>
+                    <a href="index.php" class="btn btn-outline-secondary">Retour</a>
                 </div>
 
                 <form action="store.php" method="post">
@@ -104,7 +104,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                     </div>
 
                     <div class="d-flex gap-2 justify-content-end mt-4">
-                        <a href="../index.php" class="btn btn-outline-secondary">Annuler</a>
+                        <a href="index.php" class="btn btn-outline-secondary">Annuler</a>
                         <button type="submit" class="btn text-white" style="background-color: #0B3041;">
                             Enregistrer le produit
                         </button>
