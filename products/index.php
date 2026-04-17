@@ -44,7 +44,7 @@ require_once __DIR__ . '/../partials/navbar.php';
             </div>
         <?php else: ?>
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="table table-sm align-middle">
                     <thead>
                         <tr>
                             <th scope="col">Nom</th>
