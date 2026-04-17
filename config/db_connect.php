@@ -1,7 +1,9 @@
 <?php
 
+// Les constantes de connexion sont definies dans db.php pour centraliser la configuration.
 require_once __DIR__ . '/db.php';
 
+// On ouvre ici une connexion PDO unique reutilisable dans les autres fichiers.
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8', MYSQL_HOST, MYSQL_NAME, MYSQL_PORT),
@@ -14,10 +16,7 @@ try {
     die('Erreur : ' . $exception->getMessage());
 }
 
-
-
-
-
+// Ce helper sert aux requetes d'ecriture : il renvoie simplement vrai ou faux.
 function saveInDB(string $query, array $params = []): bool
 {
     global $pdo;
@@ -30,6 +29,7 @@ function saveInDB(string $query, array $params = []): bool
     }
 }
 
+// Ce helper est utile quand on attend une liste complete de resultats.
 function fetchManyFromDB(string $query, array $params = []): array|false
 {
     global $pdo;
@@ -43,7 +43,7 @@ function fetchManyFromDB(string $query, array $params = []): array|false
     }
 }
 
-
+// Ce helper simplifie les cas ou une seule ligne est attendue.
 function fetchOneFromDB(string $query, array $params = []): array|false
 {
     global $pdo;
