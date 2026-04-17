@@ -1,4 +1,5 @@
 <?php
+// La session sert a memoriser les anciennes valeurs du formulaire en cas d'erreur.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -23,6 +24,7 @@ $_SESSION['old_product'] = [
     'stock' => $stock,
 ];
 
+// On valide d'abord les champs obligatoires avant de tenter l'insertion SQL.
 if ($name === '' || $code === '' || $price === '' || $stock === '') {
     $_SESSION['flash_message'] = 'Veuillez remplir tous les champs obligatoires.';
     $_SESSION['flash_type'] = 'danger';
@@ -45,6 +47,8 @@ if (filter_var($stock, FILTER_VALIDATE_INT) === false || (int) $stock < 0) {
 }
 
 try {
+    // La requete preparee protege l'insertion et separe clairement
+    // la structure SQL des valeurs provenant du formulaire.
     $statement = $pdo->prepare(
         'INSERT INTO products (name, code, description, price, stock) VALUES (:name, :code, :description, :price, :stock)'
     );
