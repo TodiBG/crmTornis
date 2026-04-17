@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/db.php';
 
+// Cette connexion PDO est partagee par toutes les pages du projet.
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8', MYSQL_HOST, MYSQL_NAME, MYSQL_PORT),
@@ -23,6 +24,7 @@ function saveInDB(string $query, array $params = []): bool
     global $pdo;
 
     try {
+        // prepare + execute permet de separer la requete SQL des donnees utilisateur.
         $statement = $pdo->prepare($query);
         return $statement->execute($params);
     } catch (PDOException $exception) {
@@ -35,6 +37,7 @@ function fetchManyFromDB(string $query, array $params = []): array|false
     global $pdo;
 
     try {
+        // fetchAll est adapte aux listes : tableau de produits, clients, commandes, etc.
         $statement = $pdo->prepare($query);
         $statement->execute($params);
         return $statement->fetchAll();
@@ -49,6 +52,7 @@ function fetchOneFromDB(string $query, array $params = []): array|false
     global $pdo;
 
     try {
+        // fetch est pratique quand on attend une seule ligne ou un compteur.
         $statement = $pdo->prepare($query);
         $statement->execute($params);
         $result = $statement->fetch();

@@ -1,4 +1,6 @@
 <?php
+// Cette requete calcule aussi un statut "effectif" pour tenir compte
+// de l'inactivation automatique apres 2 ans sans activite.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -60,6 +62,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                 Aucun client n'est encore enregistre.
             </div>
         <?php else: ?>
+            <!-- Le tableau sert de vue synthese pour consulter et administrer les clients. -->
             <div class="table-responsive">
                 <table class="table table-sm table-hover align-middle">
                     <thead>

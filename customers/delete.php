@@ -1,4 +1,5 @@
 <?php
+// La suppression passe par POST pour eviter une suppression accidentelle via l'URL.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
@@ -27,6 +28,7 @@ if ($customer === false) {
     exit;
 }
 
+// On interdit la suppression si le client est deja rattache a des commandes.
 $ordersUsage = fetchOneFromDB(
     'SELECT COUNT(*) AS total FROM orders WHERE customer_id = :id',
     [':id' => $customerId]
