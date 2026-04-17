@@ -53,6 +53,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                             <th scope="col" class="text-end">Prix</th>
                             <th scope="col" class="text-center">Stock</th>
                             <th scope="col">Ajoute le</th>
+                            <th scope="col" class="text-end">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -70,6 +71,11 @@ require_once __DIR__ . '/../partials/navbar.php';
                                     <?php endif; ?>
                                 </td>
                                 <td><?= htmlspecialchars(date('d/m/Y H:i', strtotime($product['created_at']))) ?></td>
+                                <td class="text-end">
+                                    <a href="edit.php?id=<?= htmlspecialchars((string) $product['id']) ?>" class="btn btn-sm btn-outline-secondary">
+                                        Modifier
+                                    </a>
+                                </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
