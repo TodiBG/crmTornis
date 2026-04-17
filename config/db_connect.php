@@ -1,11 +1,9 @@
 <?php
 
+require_once __DIR__ . '/db.php';
+require_once __DIR__ . '/auth.php';
 
-// Les constantes de connexion sont definies dans db.php pour centraliser la configuration.
-require_once 'config/db.php';
-
-
-// Connnexion à la base de données 
+// Cette connexion PDO est partagee par toutes les pages du projet.
 try {
     $pdo = new PDO(
         sprintf('mysql:host=%s;dbname=%s;port=%s;charset=utf8', MYSQL_HOST, MYSQL_NAME, MYSQL_PORT),
@@ -13,22 +11,56 @@ try {
         MYSQL_PASSWORD
     );
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
 } catch (Exception $exception) {
     die('Erreur : ' . $exception->getMessage());
 }
 
+// La protection est centralisee ici : toute page qui charge la base et n'est pas publique
+// sera automatiquement redirigee vers la page de connexion si besoin.
+if (currentRouteNeedsAuthentication()) {
+    requireAuthentication();
+}
 
-
-// Fonction de fabrication de requêtes
-function executeQuey(String  $quey) {
-    // Cette fonction est encore un brouillon pedagogique.
-    // Elle sera remplacee plus tard par un vrai helper SQL.
-    return  ;  
+function saveInDB(string $query, array $params = []): bool
+{
+    global $pdo;
 
     try {
-        $statment = $pdo->query("SELECT COUNT(*) AS total FROM customers");
-    } catch (PDOException $e) {
-        $flashMessage = "Erreur lors du chargement des données.";
-        $flashType = "danger";
+        // prepare + execute permet de separer la requete SQL des donnees utilisateur.
+        $statement = $pdo->prepare($query);
+        return $statement->execute($params);
+    } catch (PDOException $exception) {
+        return false;
+    }
+}
+
+function fetchManyFromDB(string $query, array $params = []): array|false
+{
+    global $pdo;
+
+    try {
+        // fetchAll est adapte aux listes : tableau de produits, clients, commandes, etc.
+        $statement = $pdo->prepare($query);
+        $statement->execute($params);
+        return $statement->fetchAll();
+    } catch (PDOException $exception) {
+        return false;
+    }
+}
+
+
+function fetchOneFromDB(string $query, array $params = []): array|false
+{
+    global $pdo;
+
+    try {
+        // fetch est pratique quand on attend une seule ligne ou un compteur.
+        $statement = $pdo->prepare($query);
+        $statement->execute($params);
+        $result = $statement->fetch();
+        return $result === false ? false : $result;
+    } catch (PDOException $exception) {
+        return false;
     }
 }

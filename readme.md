@@ -1,6 +1,7 @@
 #  Conception du projet CRM Tornis
 
 ## 1. Présentation du projet
+- TP de la formation en dévéloppement PHP.  
 
 Le projet **CRM Tornis** consiste à développer une application web de gestion commerciale permettant à la startup Tornis de :
 
@@ -167,6 +168,14 @@ crm/
 │ ├── edit.php
 │ ├── update.php
 │ └── delete.php
+|
+├── users/ # Gestion des utilisateurs
+│ ├── index.php
+│ ├── create.php
+│ ├── store.php
+│ ├── edit.php
+│ ├── update.php
+│ └── delete.php
 │
 ├── products/ # Gestion des produits
 │ ├── index.php
@@ -181,12 +190,16 @@ crm/
 │ ├── create.php
 │ ├── store.php
 │ ├── show.php
+│ ├── update_status.php
 │ └── delete.php
 │
 ├── partials/ # Header / Footer / Navbar
 │ ├── header.php
 │ ├── footer.php
 │ └── navbar.php
+│
+├── stats/  # Statisques
+| └──stats_global.php
 │
 ├── assets/ # CSS / JS / images
 │ ├── css/
