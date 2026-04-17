@@ -1,7 +1,9 @@
 <?php
+// Cette page recupere tous les produits pour construire la vue liste.
 session_start();
 require_once __DIR__ . '/../config/db_connect.php';
 
+// La lecture est centralisee dans un helper pour garder la page lisible.
 $products = fetchManyFromDB(
     'SELECT id, name, code, description, price, stock, created_at FROM products ORDER BY created_at DESC, id DESC'
 );
@@ -43,6 +45,7 @@ require_once __DIR__ . '/../partials/navbar.php';
                 Aucun produit n'est encore enregistre.
             </div>
         <?php else: ?>
+            <!-- Le tableau permet d'avoir une vue rapide du catalogue et du stock. -->
             <div class="table-responsive">
                 <table class="table align-middle">
                     <thead>
